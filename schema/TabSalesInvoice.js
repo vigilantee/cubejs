@@ -522,6 +522,14 @@ cube(`TabSalesInvoice`, {
       type: `time`
     }
   },
+  preAggregations: {
+    totalSalesMonthly: {
+      type: `rollup`,
+      measureReferences: [total],
+      timeDimensionReference: creation,
+      granularity: `month`
+    }
+  },
   // preAggregations: {
   //   salesCountMonthly: {
   //     type: `rollup`,
