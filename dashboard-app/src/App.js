@@ -9,6 +9,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { array } from 'prop-types';
 
 const stackedChartData = (resultSet) => {
   const data = resultSet.pivot().map(
@@ -46,7 +47,9 @@ const renderChart = (Component, pivotConfig) => ({ resultSet, error }) => (
 )
 
 const ChartRenderer = () => {
-
+  const city1="Central California";
+  const city2="Northern California";
+  const cityArray=[];
   const [granularityofchart, setGranularityofchart] = useState('day');
   const [dateRange, setdateRange] = useState("Last month");
   const [startDate, setStartDate] = useState(new Date());
@@ -60,6 +63,30 @@ const ChartRenderer = () => {
     console.log(e);
     setdateRange(e)
   }
+  const handleChange = (e) => {
+    // to find out if it's checked or not; returns true or false
+    const checked = e.target.checked;
+    
+    // to get the checked value
+    const checkedValue = e.target.value; 
+    if(checked){
+      console.log(checkedValue);
+      cityArray.push(checkedValue);
+      console.log(cityArray);
+    }else{
+      const index=cityArray.indexOf(checkedValue)
+      if (index > -1) {
+        cityArray.splice(index, 1);
+      }
+      console.log(cityArray);
+
+    }
+    
+    // to get the checked name
+    const checkedName = e.target.name;
+    
+    //then you can do with the value all you want to do with it.
+    };
 
   return (
 
@@ -84,8 +111,6 @@ const ChartRenderer = () => {
           <Dropdown.Item eventKey="month">month</Dropdown.Item>
           <Dropdown.Item eventKey="year">year</Dropdown.Item>
         </DropdownButton>
-      </div>
-      <div style={{ display: "flex", padding: 5 }}>
         Till
             <DropdownButton
           alignRight
@@ -108,7 +133,16 @@ const ChartRenderer = () => {
           <Dropdown.Item eventKey="Last year">Last year</Dropdown.Item>
 
         </DropdownButton>
-      </div>
+     
+        <div>
+            <input type="checkbox" name={city1} value={city1}  onChange={handleChange}/>
+            <label >{city1}</label>
+        </div>
+        <div>
+            <input type="checkbox" name={city2} value={city2}  onChange={handleChange}/>
+            <label >{city2}</label>
+        </div>
+    </div>
       <QueryRenderer
         query={{
           order: {},
@@ -129,7 +163,7 @@ const ChartRenderer = () => {
           filters: [{
             dimension: "TabTerritory.name",
             operator: 'equals',
-            values: ['Northern California']
+            values: cityArray
           }]
         }}
         cubejsApi={cubejsApi}
