@@ -47,9 +47,10 @@ const renderChart = (Component, pivotConfig) => ({ resultSet, error }) => (
 )
 
 const ChartRenderer = () => {
-  const city1="Central California";
-  const city2="Northern California";
+  const cities=["Central California","Northern California"];
   const cityArray=[];
+  const granularityList=["hour","day","week","month","year"];
+  const dateRangeList=["Today","Yesterday","This week","This month","This quarter","This year","Last 7 days","Last 30 days","Last week","Last month","Last quarter","Last year"];
   const [granularityofchart, setGranularityofchart] = useState('day');
   const [dateRange, setdateRange] = useState("Last month");
   const [startDate, setStartDate] = useState(new Date());
@@ -97,51 +98,42 @@ const ChartRenderer = () => {
         <DatePicker selected={endDate} onChange={date => { setEndDate(date); setdateRange(null) }} />
       </div>
       <div style={{ display: "flex", padding: 5 }}>
+
         Granularity
             <DropdownButton
-          alignRight
-          title={granularityofchart}
-          id="dropdown-menu-align-right"
-          variant="success"
-          onSelect={handleSelectgranularity}
-        >
-          <Dropdown.Item eventKey="hour">hour</Dropdown.Item>
-          <Dropdown.Item eventKey="day">day</Dropdown.Item>
-          <Dropdown.Item eventKey="week">week</Dropdown.Item>
-          <Dropdown.Item eventKey="month">month</Dropdown.Item>
-          <Dropdown.Item eventKey="year">year</Dropdown.Item>
-        </DropdownButton>
-        Till
-            <DropdownButton
-          alignRight
-          title={dateRange}
-          id="dropdown-menu-align-left"
-          variant="success"
-          onSelect={handleSelectdateRange}
-        >
-          <Dropdown.Item eventKey="Today">Today</Dropdown.Item>
-          <Dropdown.Item eventKey="Yesterday">Yesterday</Dropdown.Item>
-          <Dropdown.Item eventKey="This week">This week</Dropdown.Item>
-          <Dropdown.Item eventKey="This month">This month</Dropdown.Item>
-          <Dropdown.Item eventKey="This quarter">This quarter</Dropdown.Item>
-          <Dropdown.Item eventKey="This year">This year</Dropdown.Item>
-          <Dropdown.Item eventKey="Last 7 days">Last 7 days</Dropdown.Item>
-          <Dropdown.Item eventKey="Last 30 days">Last 30 days</Dropdown.Item>
-          <Dropdown.Item eventKey="Last week">Last week</Dropdown.Item>
-          <Dropdown.Item eventKey="Last month">Last month</Dropdown.Item>
-          <Dropdown.Item eventKey="Last quarter">Last quarter</Dropdown.Item>
-          <Dropdown.Item eventKey="Last year">Last year</Dropdown.Item>
+                alignRight
+                title={granularityofchart}
+                id="dropdown-menu-align-right"
+                variant="success"
+                onSelect={handleSelectgranularity}
+              >
+                {
+                    granularityList.map(granularityi=>
+                    <Dropdown.Item eventKey={granularityi}>{granularityi}</Dropdown.Item>)
+                }
+            </DropdownButton>
 
-        </DropdownButton>
-     
-        <div>
-            <input type="checkbox" name={city1} value={city1}  onChange={handleChange}/>
-            <label >{city1}</label>
-        </div>
-        <div>
-            <input type="checkbox" name={city2} value={city2}  onChange={handleChange}/>
-            <label >{city2}</label>
-        </div>
+          Till
+            <DropdownButton
+              alignRight
+              title={dateRange}
+              id="dropdown-menu-align-left"
+              variant="success"
+              onSelect={handleSelectdateRange}
+            >
+              {
+                  dateRangeList.map(i=>
+                  <Dropdown.Item eventKey={i}>{i}</Dropdown.Item>)
+              }
+
+            </DropdownButton>
+
+        {
+          cities.map(city=> <div>
+            <input type="checkbox" name={city} value={city}  onChange={handleChange}/>
+            <label >{city}</label>
+          </div>)
+        }
     </div>
       <QueryRenderer
         query={{
@@ -163,7 +155,7 @@ const ChartRenderer = () => {
           filters: [{
             dimension: "TabTerritory.name",
             operator: 'equals',
-            values: cityArray
+            values: cities
           }]
         }}
         cubejsApi={cubejsApi}
