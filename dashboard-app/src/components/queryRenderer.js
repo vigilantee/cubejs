@@ -1,10 +1,8 @@
 import React from 'react';
 import { QueryRenderer } from '@cubejs-client/react';
-import { render } from 'react-dom';
 
 export function Query(props) {
     const {granularityofchart, dateRange, startDate, endDate, cubejsApi, lineRender, renderChart,cityArray} = props;
-    // window.localStorage.getItem('cityArray')
     return(
     <QueryRenderer
         query={{

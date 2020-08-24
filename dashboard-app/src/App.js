@@ -10,6 +10,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { array } from 'prop-types';
 import { Query } from './components/queryRenderer';
+import TotalInventory from './components/TotalInventory/TotalInventory';
+
 
 const stackedChartData = (resultSet) => {
   const data = resultSet.pivot().map(
@@ -75,7 +77,7 @@ const ChartRenderer = () => {
 
   return (
 
-    <div style={{ padding: 30 }}>
+    <div style={{ padding: 30}}>
       <div style={{ display: "flex", padding: 5 }}>
         Select Date Range
         <DatePicker selected={startDate} onChange={date => { setStartDate(date); setdateRange(null) }} />
@@ -92,8 +94,8 @@ const ChartRenderer = () => {
           onSelect={handleSelectgranularity}
         >
           {
-            granularityList.map(granularityi =>
-              <Dropdown.Item eventKey={granularityi}>{granularityi}</Dropdown.Item>)
+            granularityList.map((granularityi,index) =>
+              <Dropdown.Item key={index} eventKey={granularityi}>{granularityi}</Dropdown.Item>)
           }
         </DropdownButton>
 
@@ -106,8 +108,8 @@ const ChartRenderer = () => {
           onSelect={handleSelectdateRange}
         >
           {
-            dateRangeList.map(i =>
-              <Dropdown.Item eventKey={i}>{i}</Dropdown.Item>)
+            dateRangeList.map((val,index) =>
+              <Dropdown.Item key={index} eventKey={val}>{val}</Dropdown.Item>)
           }
 
         </DropdownButton>
@@ -131,6 +133,7 @@ const ChartRenderer = () => {
         renderChart={renderChart}
         cityArray={cityArray}
       />
+      <TotalInventory/>
 
     </div>
   )
