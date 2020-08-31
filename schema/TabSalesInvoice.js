@@ -38,6 +38,10 @@ cube(`TabSalesInvoice`, {
       sql: `total`,
       type: `sum`
     },
+    AverageInvoiceAmount:{
+      sql:`${total}/${count}`,
+      type:`number`
+    },
     
     basePaidAmount: {
       sql: `base_paid_amount`,
