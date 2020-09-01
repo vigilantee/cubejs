@@ -73,11 +73,14 @@ cube(`TabSalesInvoice`, {
       sql: `net_total`,
       type: `sum`
     },
+    netTotalRows:{
+      sql:`net_total`,
+      type:`number`
+    },
     AverageInvoiceAmount:{
-      sql:`${netTotal}`,
+      sql:`${netTotalRows}`,
       type:`avg`
     },
-    
     discountAmount: {
       sql: `discount_amount`,
       type: `sum`
