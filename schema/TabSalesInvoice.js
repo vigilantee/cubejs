@@ -38,11 +38,7 @@ cube(`TabSalesInvoice`, {
       sql: `total`,
       type: `sum`
     },
-    AverageInvoiceAmount:{
-      sql:`${total}/${count}`,
-      type:`number`
-    },
-    
+
     basePaidAmount: {
       sql: `base_paid_amount`,
       type: `sum`
@@ -76,6 +72,10 @@ cube(`TabSalesInvoice`, {
     netTotal: {
       sql: `net_total`,
       type: `sum`
+    },
+    AverageInvoiceAmount:{
+      sql:`${netTotal}`,
+      type:`avg`
     },
     
     discountAmount: {
