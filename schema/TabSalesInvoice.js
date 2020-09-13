@@ -1,5 +1,5 @@
 cube(`TabSalesInvoice`, {
-  sql: `SELECT * FROM test.\`tabSales Invoice\``,
+  sql: `SELECT * FROM newdatabase.\`tabSales Invoice\``,
   
   joins: {
     TabTerritory: {
@@ -10,8 +10,12 @@ cube(`TabSalesInvoice`, {
   
   measures: {
     count: {
-      type: `count`,
-      drillMembers: [name, customerName, tcName, taxId, offlinePosName, shippingAddressName, title, toDate, poDate, dueDate, postingDate, fromDate]
+      sql:`net_total`,
+      type: `sum`,
+      drillMembers: [name, customerName, tcName, taxId, offlinePosName, shippingAddressName, title, toDate, poDate, dueDate, postingDate, fromDate],
+      filters: [
+        { sql: `${CUBE}.status = 'paid'` }
+      ]
     },
     
     baseChangeAmount: {
@@ -68,15 +72,26 @@ cube(`TabSalesInvoice`, {
       sql: `pos_total_qty`,
       type: `sum`
     },
-    
+
     netTotal: {
       sql: `net_total`,
       type: `sum`
     },
+
+    trueNetTotal:{
+      sql:`net_total`,
+      type: `sum`,
+      drillMembers: [netTotal],
+      filters: [
+        { sql: `${CUBE}.status != 'Draft' OR ${CUBE}.status != 'Cancelled'` }
+      ]
+    },
+
     netTotalRows:{
       sql:`net_total`,
       type:`number`
     },
+
     AverageInvoiceAmount:{
       sql:`${netTotalRows}`,
       type:`avg`
@@ -529,6 +544,8 @@ cube(`TabSalesInvoice`, {
       type: `time`
     }
   },
+
+ 
   preAggregations: {
     totalSalesMonthly: {
       type: `rollup`,
@@ -537,6 +554,8 @@ cube(`TabSalesInvoice`, {
       granularity: `month`
     }
   },
+
+
   // preAggregations: {
   //   salesCountMonthly: {
   //     type: `rollup`,

@@ -9,7 +9,11 @@ cube(`TabCustomer`, {
     count: {
       type: `count`,
       drillMembers: [name, leadName, taxId, emailId, customerPosId, customerName, openingDate]
-    }
+    },
+    countName:{
+      sql:`name`,
+      type: "countDistinct"
+    },
   },
   
   dimensions: {
