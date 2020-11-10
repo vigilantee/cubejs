@@ -1,23 +1,27 @@
 cube(`TabSalesInvoice`, {
-  sql: `SELECT * FROM newdatabase.\`tabSales Invoice\``,
+  sql: `SELECT * FROM _544c62792c207957.\`tabSales Invoice\``,
   
   joins: {
-    TabTerritory: {
-      relationship: `belongsTo`,
-      sql: `${TabSalesInvoice}.territory = ${TabTerritory}.name`
+    TabCustomer: {
+      relationship: `hasMany`,
+      sql: `${TabSalesInvoice}.customer = ${TabCustomer}.name`
     }
   },
   
   measures: {
     count: {
-      sql:`net_total`,
-      type: `sum`,
+      type: `count`,
       drillMembers: [name, customerName, tcName, taxId, offlinePosName, shippingAddressName, title, toDate, poDate, dueDate, postingDate, fromDate],
-      filters: [
-        { sql: `${CUBE}.status = 'paid'` }
-      ]
     },
     
+    trueCount: {
+      type: `count`,
+      drillMembers :[count],
+      filters: [
+        { sql: `${CUBE}.docstatus=1` }
+      ]
+    },
+
     baseChangeAmount: {
       sql: `base_change_amount`,
       type: `sum`
@@ -32,7 +36,17 @@ cube(`TabSalesInvoice`, {
       sql: `grand_total`,
       type: `sum`
     },
-    
+
+    trueGrandTotal: {
+      sql:`grand_total`,
+      type:`sum`,
+      drillMembers:[grandTotal],
+      filters:[
+        { sql: `${CUBE}.docstatus=1` }
+      ],
+      format: `currency`
+    },
+
     baseWriteOffAmount: {
       sql: `base_write_off_amount`,
       type: `sum`

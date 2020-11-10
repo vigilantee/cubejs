@@ -1,8 +1,11 @@
 cube(`TabSalesInvoiceItem`, {
-  sql: `SELECT * FROM newdatabase.\`tabSales Invoice Item\``,
+  sql: `SELECT * FROM _544c62792c207957.\`tabSales Invoice Item\``,
   
   joins: {
-    
+    TabSalesInvoice: {
+      relationship: `belongsTo`,
+      sql: `${TabSalesInvoiceItem}.parent = ${TabSalesInvoice}.name`
+    }
   },
   
   measures: {
@@ -11,13 +14,39 @@ cube(`TabSalesInvoiceItem`, {
       drillMembers: [name, itemName, serviceStopDate, serviceStartDate, serviceEndDate]
     },
 
-    itemCodeCount:{
-      sql:`item_code`,
-      type: "countDistinct"
+    A: {
+      sql: `${TabSalesInvoice.trueCount}`,
+      type: `number`
     },
 
-    deliveredQty: {
-      sql: `delivered_qty`,
+    B: {
+      sql: `${TabSalesOrder.trueCount}`,
+      type: `number`
+    },
+
+    salesInvoiceToSalesOrderRatio: {
+      sql: `${A}/${B}*100`,
+      // sql:`1031/1058`,
+      type: `number`,
+      format: `percent`
+    },
+    
+    qty: {
+      sql: `qty`,
+      type: `sum`
+    },
+    
+    trueQty: {
+      sql: `qty`,
+      type: `sum`,
+      drillMembers:[qty],
+      filters: [
+        { sql: `${CUBE}.docstatus=1` }
+      ]
+    },
+
+    stockQty: {
+      sql: `stock_qty`,
       type: `sum`
     },
     
@@ -26,28 +55,18 @@ cube(`TabSalesInvoiceItem`, {
       type: `sum`
     },
     
-    amount: {
-      sql: `amount`,
-      type: `sum`
-    },
-    
-    stockQty: {
-      sql: `stock_qty`,
-      type: `sum`
-    },
-    
     discountAmount: {
       sql: `discount_amount`,
       type: `sum`
     },
     
-    actualQty: {
-      sql: `actual_qty`,
+    amount: {
+      sql: `amount`,
       type: `sum`
     },
     
-    qty: {
-      sql: `qty`,
+    baseAmount: {
+      sql: `base_amount`,
       type: `sum`
     },
     
@@ -56,18 +75,23 @@ cube(`TabSalesInvoiceItem`, {
       type: `sum`
     },
     
-    actualBatchQty: {
-      sql: `actual_batch_qty`,
-      type: `sum`
-    },
-    
     baseNetAmount: {
       sql: `base_net_amount`,
       type: `sum`
     },
     
-    baseAmount: {
-      sql: `base_amount`,
+    actualBatchQty: {
+      sql: `actual_batch_qty`,
+      type: `sum`
+    },
+    
+    actualQty: {
+      sql: `actual_qty`,
+      type: `sum`
+    },
+    
+    deliveredQty: {
+      sql: `delivered_qty`,
       type: `sum`
     }
   },
@@ -103,133 +127,8 @@ cube(`TabSalesInvoiceItem`, {
       type: `string`
     },
     
-    qualityInspection: {
-      sql: `quality_inspection`,
-      type: `string`
-    },
-    
-    stockUom: {
-      sql: `stock_uom`,
-      type: `string`
-    },
-    
-    itemGroup: {
-      sql: `item_group`,
-      type: `string`
-    },
-    
-    soDetail: {
-      sql: `so_detail`,
-      type: `string`
-    },
-    
-    incomeAccount: {
-      sql: `income_account`,
-      type: `string`
-    },
-    
-    pricingRules: {
-      sql: `pricing_rules`,
-      type: `string`
-    },
-    
-    asset: {
-      sql: `asset`,
-      type: `string`
-    },
-    
-    serialNo: {
-      sql: `serial_no`,
-      type: `string`
-    },
-    
-    uom: {
-      sql: `uom`,
-      type: `string`
-    },
-    
-    itemTaxTemplate: {
-      sql: `item_tax_template`,
-      type: `string`
-    },
-    
-    salesOrder: {
-      sql: `sales_order`,
-      type: `string`
-    },
-    
-    itemTaxRate: {
-      sql: `item_tax_rate`,
-      type: `string`
-    },
-    
-    costCenter: {
-      sql: `cost_center`,
-      type: `string`
-    },
-    
-    financeBook: {
-      sql: `finance_book`,
-      type: `string`
-    },
-    
-    weightUom: {
-      sql: `weight_uom`,
-      type: `string`
-    },
-    
-    customerItemCode: {
-      sql: `customer_item_code`,
-      type: `string`
-    },
-    
     barcode: {
       sql: `barcode`,
-      type: `string`
-    },
-    
-    warehouse: {
-      sql: `warehouse`,
-      type: `string`
-    },
-    
-    deferredRevenueAccount: {
-      sql: `deferred_revenue_account`,
-      type: `string`
-    },
-    
-    targetWarehouse: {
-      sql: `target_warehouse`,
-      type: `string`
-    },
-    
-    image: {
-      sql: `image`,
-      type: `string`
-    },
-    
-    dnDetail: {
-      sql: `dn_detail`,
-      type: `string`
-    },
-    
-    deliveryNote: {
-      sql: `delivery_note`,
-      type: `string`
-    },
-    
-    expenseAccount: {
-      sql: `expense_account`,
-      type: `string`
-    },
-    
-    batchNo: {
-      sql: `batch_no`,
-      type: `string`
-    },
-    
-    description: {
-      sql: `description`,
       type: `string`
     },
     
@@ -243,8 +142,38 @@ cube(`TabSalesInvoiceItem`, {
       type: `string`
     },
     
+    customerItemCode: {
+      sql: `customer_item_code`,
+      type: `string`
+    },
+    
+    description: {
+      sql: `description`,
+      type: `string`
+    },
+    
+    itemGroup: {
+      sql: `item_group`,
+      type: `string`
+    },
+    
     brand: {
       sql: `brand`,
+      type: `string`
+    },
+    
+    image: {
+      sql: `image`,
+      type: `string`
+    },
+    
+    stockUom: {
+      sql: `stock_uom`,
+      type: `string`
+    },
+    
+    uom: {
+      sql: `uom`,
       type: `string`
     },
     
@@ -253,8 +182,105 @@ cube(`TabSalesInvoiceItem`, {
       type: `string`
     },
     
+    itemTaxTemplate: {
+      sql: `item_tax_template`,
+      type: `string`
+    },
+    
+    pricingRules: {
+      sql: `pricing_rules`,
+      type: `string`
+    },
+    
+    incomeAccount: {
+      sql: `income_account`,
+      type: `string`
+    },
+    
+    asset: {
+      sql: `asset`,
+      type: `string`
+    },
+    
+    financeBook: {
+      sql: `finance_book`,
+      type: `string`
+    },
+    
+    expenseAccount: {
+      sql: `expense_account`,
+      type: `string`
+    },
+    
+    deferredRevenueAccount: {
+      sql: `deferred_revenue_account`,
+      type: `string`
+    },
+    
+    weightUom: {
+      sql: `weight_uom`,
+      type: `string`
+    },
+    
+    warehouse: {
+      sql: `warehouse`,
+      type: `string`
+    },
+    
+    targetWarehouse: {
+      sql: `target_warehouse`,
+      type: `string`
+    },
+    
+    qualityInspection: {
+      sql: `quality_inspection`,
+      type: `string`
+    },
+    
+    batchNo: {
+      sql: `batch_no`,
+      type: `string`
+    },
+    
     packageTag: {
       sql: `package_tag`,
+      type: `string`
+    },
+    
+    serialNo: {
+      sql: `serial_no`,
+      type: `string`
+    },
+    
+    itemTaxRate: {
+      sql: `item_tax_rate`,
+      type: `string`
+    },
+    
+    salesOrder: {
+      sql: `sales_order`,
+      type: `string`,
+      primaryKey: true
+
+    },
+    
+    soDetail: {
+      sql: `so_detail`,
+      type: `string`
+    },
+    
+    deliveryNote: {
+      sql: `delivery_note`,
+      type: `string`
+    },
+    
+    dnDetail: {
+      sql: `dn_detail`,
+      type: `string`
+    },
+    
+    costCenter: {
+      sql: `cost_center`,
       type: `string`
     },
     
