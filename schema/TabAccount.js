@@ -1,5 +1,5 @@
 cube(`TabAccount`, {
-  sql: `SELECT * FROM _544c62792c207957.\`tabAccount\``,
+  sql: `SELECT * FROM cubejs.\`tabAccount\``,
   
   joins: {
     

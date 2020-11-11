@@ -1,5 +1,5 @@
 cube(`TabSalesInvoice`, {
-  sql: `SELECT * FROM _544c62792c207957.\`tabSales Invoice\``,
+  sql: `SELECT * FROM cubejs.\`tabSales Invoice\``,
   
   joins: {
     TabCustomer: {
