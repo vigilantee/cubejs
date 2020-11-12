@@ -1,5 +1,5 @@
 cube(`TabCustomer`, {
-  sql: `SELECT * FROM cubejs.\`tabCustomer\``,
+  sql: `SELECT * FROM newdatabase.\`tabCustomer\``,
   
   joins: {
     TabTerritory: {
