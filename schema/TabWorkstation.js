@@ -1,5 +1,5 @@
 cube(`TabWorkstation`, {
-  sql: `SELECT * FROM newdatabase.\`tabWorkstation\``,
+  sql: `SELECT * FROM \`tabWorkstation\``,
   
   joins: {
     

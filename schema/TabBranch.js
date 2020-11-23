@@ -1,5 +1,6 @@
+// import { db_name } from "../config/config";
 cube(`TabBranch`, {
-  sql: `SELECT * FROM newdatabase.\`tabBranch\``,
+  sql: `SELECT * FROM \`tabBranch\``,
   
   joins: {
     

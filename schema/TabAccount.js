@@ -1,5 +1,5 @@
 cube(`TabAccount`, {
-  sql: `SELECT * FROM newdatabase.\`tabAccount\``,
+  sql: `SELECT * FROM \`tabAccount\``,
   
   joins: {
     
