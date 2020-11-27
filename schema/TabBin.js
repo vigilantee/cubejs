@@ -1,5 +1,5 @@
-cube(`TabWorkstation`, {
-  sql: `SELECT * FROM \`tabWorkstation\``,
+cube(`TabBin`, {
+  sql: `SELECT * FROM \`tabBin\``,
   
   joins: {
     
@@ -8,7 +8,42 @@ cube(`TabWorkstation`, {
   measures: {
     count: {
       type: `count`,
-      drillMembers: [name, workstationName, holidayList]
+      drillMembers: [name]
+    },
+    
+    orderedQty: {
+      sql: `ordered_qty`,
+      type: `sum`
+    },
+    
+    projectedQty: {
+      sql: `projected_qty`,
+      type: `sum`
+    },
+    
+    stockValue: {
+      sql: `stock_value`,
+      type: `sum`
+    },
+    
+    actualQty: {
+      sql: `actual_qty`,
+      type: `sum`
+    },
+    
+    indentedQty: {
+      sql: `indented_qty`,
+      type: `sum`
+    },
+    
+    plannedQty: {
+      sql: `planned_qty`,
+      type: `sum`
+    },
+    
+    reservedQty: {
+      sql: `reserved_qty`,
+      type: `sum`
     }
   },
   
@@ -43,18 +78,18 @@ cube(`TabWorkstation`, {
       type: `string`
     },
     
-    description: {
-      sql: `description`,
+    stockUom: {
+      sql: `stock_uom`,
       type: `string`
     },
     
-    workstationName: {
-      sql: `workstation_name`,
+    warehouse: {
+      sql: `warehouse`,
       type: `string`
     },
     
-    holidayList: {
-      sql: `holiday_list`,
+    itemCode: {
+      sql: `item_code`,
       type: `string`
     },
     

@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "kill": "kill $(lsof -t -i:4000)"
   },
   "dependencies": {
     "@cubejs-backend/mysql-driver": "^0.19.61",
-    "@cubejs-backend/server": "^0.19.61"
+    "@cubejs-backend/server": "^0.19.61",
+    "axios": "^0.21.0"
   }
 }

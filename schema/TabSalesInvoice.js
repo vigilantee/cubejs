@@ -1,19 +1,27 @@
 cube(`TabSalesInvoice`, {
-  sql: `SELECT * FROM newdatabase.\`tabSales Invoice\``,
+  sql: `SELECT * FROM \`tabSales Invoice\``,
   
   joins: {
-    TabTerritory: {
-      relationship: `belongsTo`,
-      sql: `${TabSalesInvoice}.territory = ${TabTerritory}.name`
+    TabCustomer: {
+      relationship: `hasMany`,
+      sql: `${TabSalesInvoice}.customer = ${TabCustomer}.name`
     }
   },
   
   measures: {
     count: {
       type: `count`,
-      drillMembers: [name, customerName, tcName, taxId, offlinePosName, shippingAddressName, title, toDate, poDate, dueDate, postingDate, fromDate]
+      drillMembers: [name, customerName, tcName, taxId, offlinePosName, shippingAddressName, title, toDate, poDate, dueDate, postingDate, fromDate],
     },
     
+    trueCount: {
+      type: `count`,
+      drillMembers :[count],
+      filters: [
+        { sql: `${CUBE}.docstatus=1` }
+      ]
+    },
+
     baseChangeAmount: {
       sql: `base_change_amount`,
       type: `sum`
@@ -28,7 +36,17 @@ cube(`TabSalesInvoice`, {
       sql: `grand_total`,
       type: `sum`
     },
-    
+
+    trueGrandTotal: {
+      sql:`grand_total`,
+      type:`sum`,
+      drillMembers:[grandTotal],
+      filters:[
+        { sql: `${CUBE}.docstatus=1` }
+      ],
+      format: `currency`
+    },
+
     baseWriteOffAmount: {
       sql: `base_write_off_amount`,
       type: `sum`
@@ -38,7 +56,7 @@ cube(`TabSalesInvoice`, {
       sql: `total`,
       type: `sum`
     },
-    
+
     basePaidAmount: {
       sql: `base_paid_amount`,
       type: `sum`
@@ -68,12 +86,30 @@ cube(`TabSalesInvoice`, {
       sql: `pos_total_qty`,
       type: `sum`
     },
-    
+
     netTotal: {
       sql: `net_total`,
       type: `sum`
     },
-    
+
+    trueNetTotal:{
+      sql:`net_total`,
+      type: `sum`,
+      drillMembers: [netTotal],
+      filters: [
+        { sql: `${CUBE}.status != 'Draft' OR ${CUBE}.status != 'Cancelled'` }
+      ]
+    },
+
+    netTotalRows:{
+      sql:`net_total`,
+      type:`number`
+    },
+
+    AverageInvoiceAmount:{
+      sql:`${netTotalRows}`,
+      type:`avg`
+    },
     discountAmount: {
       sql: `discount_amount`,
       type: `sum`
@@ -522,6 +558,8 @@ cube(`TabSalesInvoice`, {
       type: `time`
     }
   },
+
+ 
   preAggregations: {
     totalSalesMonthly: {
       type: `rollup`,
@@ -530,6 +568,8 @@ cube(`TabSalesInvoice`, {
       granularity: `month`
     }
   },
+
+
   // preAggregations: {
   //   salesCountMonthly: {
   //     type: `rollup`,

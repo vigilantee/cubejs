@@ -1,5 +1,5 @@
 cube(`TabTerritory`, {
-  sql: `SELECT * FROM newdatabase.\`tabTerritory\``,
+  sql: `SELECT * FROM \`tabTerritory\``,
 
   joins: {
 
@@ -72,6 +72,11 @@ cube(`TabTerritory`, {
     modified: {
       sql: `modified`,
       type: `time`
+    },
+
+    is_group: {
+      sql: `is_group`,
+      type: `number`
     }
   }
 });

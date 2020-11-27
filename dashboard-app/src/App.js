@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import cubejs from '@cubejs-client/core';
-import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import { Chart, Axis, Tooltip, Geom, Coord, Legend } from 'bizcharts';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +8,10 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { array } from 'prop-types';
+import { Query } from './components/queryRenderer';
+import TotalInventory from './components/TotalInventory/TotalInventory';
+
 
 const stackedChartData = (resultSet) => {
   const data = resultSet.pivot().map(
@@ -22,7 +25,6 @@ const stackedChartData = (resultSet) => {
 
   return data;
 }
-
 const lineRender = ({ resultSet }) => (
   <Chart scale={{ x: { tickCount: 8 } }} height={400} data={stackedChartData(resultSet)} forceFit>
     <Axis name="x" />
@@ -46,7 +48,10 @@ const renderChart = (Component, pivotConfig) => ({ resultSet, error }) => (
 )
 
 const ChartRenderer = () => {
-
+  const cities = ["Central California", "Northern California"];
+  const [cityArray, setcityArray] = useState([]);
+  const granularityList = ["hour", "day", "week", "month", "year"];
+  const dateRangeList = ["Today", "Yesterday", "This week", "This month", "This quarter", "This year", "Last 7 days", "Last 30 days", "Last week", "Last month", "Last quarter", "Last year"];
   const [granularityofchart, setGranularityofchart] = useState('day');
   const [dateRange, setdateRange] = useState("Last month");
   const [startDate, setStartDate] = useState(new Date());
@@ -60,16 +65,26 @@ const ChartRenderer = () => {
     console.log(e);
     setdateRange(e)
   }
+  useEffect(() => {
+    console.log("cityarray", cityArray);
+  }, [cityArray])
+  const cityhandleChange = (e) => {
+    // to find out if it's checked or not; returns true or false
+    if (!e) return;
+    const checked = e.target.checked;
+    setcityArray(checked ? [...cityArray, e.target.value] : cityArray.filter(el => el != e.target.value));
+  };
 
   return (
 
-    <div style={{padding: 30}}>
+    <div style={{ padding: 30}}>
       <div style={{ display: "flex", padding: 5 }}>
         Select Date Range
         <DatePicker selected={startDate} onChange={date => { setStartDate(date); setdateRange(null) }} />
         <DatePicker selected={endDate} onChange={date => { setEndDate(date); setdateRange(null) }} />
       </div>
       <div style={{ display: "flex", padding: 5 }}>
+
         Granularity
             <DropdownButton
           alignRight
@@ -78,15 +93,13 @@ const ChartRenderer = () => {
           variant="success"
           onSelect={handleSelectgranularity}
         >
-          <Dropdown.Item eventKey="hour">hour</Dropdown.Item>
-          <Dropdown.Item eventKey="day">day</Dropdown.Item>
-          <Dropdown.Item eventKey="week">week</Dropdown.Item>
-          <Dropdown.Item eventKey="month">month</Dropdown.Item>
-          <Dropdown.Item eventKey="year">year</Dropdown.Item>
+          {
+            granularityList.map((granularityi,index) =>
+              <Dropdown.Item key={index} eventKey={granularityi}>{granularityi}</Dropdown.Item>)
+          }
         </DropdownButton>
-      </div>
-      <div style={{ display: "flex", padding: 5 }}>
-        Till
+
+          Till
             <DropdownButton
           alignRight
           title={dateRange}
@@ -94,55 +107,34 @@ const ChartRenderer = () => {
           variant="success"
           onSelect={handleSelectdateRange}
         >
-          <Dropdown.Item eventKey="Today">Today</Dropdown.Item>
-          <Dropdown.Item eventKey="Yesterday">Yesterday</Dropdown.Item>
-          <Dropdown.Item eventKey="This week">This week</Dropdown.Item>
-          <Dropdown.Item eventKey="This month">This month</Dropdown.Item>
-          <Dropdown.Item eventKey="This quarter">This quarter</Dropdown.Item>
-          <Dropdown.Item eventKey="This year">This year</Dropdown.Item>
-          <Dropdown.Item eventKey="Last 7 days">Last 7 days</Dropdown.Item>
-          <Dropdown.Item eventKey="Last 30 days">Last 30 days</Dropdown.Item>
-          <Dropdown.Item eventKey="Last week">Last week</Dropdown.Item>
-          <Dropdown.Item eventKey="Last month">Last month</Dropdown.Item>
-          <Dropdown.Item eventKey="Last quarter">Last quarter</Dropdown.Item>
-          <Dropdown.Item eventKey="Last year">Last year</Dropdown.Item>
+          {
+            dateRangeList.map((val,index) =>
+              <Dropdown.Item key={index} eventKey={val}>{val}</Dropdown.Item>)
+          }
 
         </DropdownButton>
+
+        {
+          cities.map((city, index) => <div>
+            <input key={index} type="checkbox" name={city} value={city} onChange={cityhandleChange} />
+            <label >{city}</label>
+          </div>)
+        }
+
       </div>
-      <QueryRenderer
-        query={{
-          order: {},
-          measures: [
-            "TabSalesInvoice.total",
-            // "TabSalesInvoice.totalSalesMonthly",
-            "TabSalesInvoice.outstandingAmount",
-            "TabSalesInvoice.totalQty",
-            "TabSalesInvoice.discountAmount",
-          ],
-          timeDimensions: [
-            {
-              dimension: "TabSalesInvoice.creation",
-              granularity: granularityofchart,
-              dateRange: (dateRange ? dateRange : [startDate, endDate])
-            }
-          ],
-          filters: [{
-            dimension: "TabTerritory.name",
-            operator: 'equals',
-            values: ['Northern California']
-          }]
-        }}
+      <Query
+        granularityofchart={granularityofchart}
+        dateRange={dateRange}
+        startDate={startDate}
+        endDate={endDate}
+        cities={cities}
         cubejsApi={cubejsApi}
-        render={renderChart(lineRender, {
-          x: [
-            "TabSalesInvoice.creation.day"
-          ],
-          y: [
-            "measures"
-          ],
-          fillMissingDates: true
-        })}
+        lineRender={lineRender}
+        renderChart={renderChart}
+        cityArray={cityArray}
       />
+      <TotalInventory/>
+
     </div>
   )
 }
