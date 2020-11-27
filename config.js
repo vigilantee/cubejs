@@ -1,3 +1,3 @@
-const FRAPPE_HOST = "http://0.0.0.0:8000";
+const FRAPPE_HOST = "https://demo.bloomstack.garden";
 
 module.exports = FRAPPE_HOST;
