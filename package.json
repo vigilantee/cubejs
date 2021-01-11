@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "@cubejs-backend/mysql-driver": "^0.19.61",
-    "@cubejs-backend/server": "^0.19.61",
-    "axios": "^0.21.0"
+    "@cubejs-backend/server-core": "^0.24.3",
+    "axios": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
   }
 }
